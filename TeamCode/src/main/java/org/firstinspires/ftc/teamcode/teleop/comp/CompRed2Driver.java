@@ -54,7 +54,7 @@ public class CompRed2Driver extends DennyOpMode {
         if(base.wasJustPressed(GamepadKeys.Button.DPAD_DOWN)){
             r.drive.teleToggleCentric();
         }
-        r.drive.drive(base,0,true,true);
+        r.drive.drive(base);
 
         Pose futurePose = PoseController.getFuturePose( r.drive.getFollower());
 
