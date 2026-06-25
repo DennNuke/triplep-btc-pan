@@ -1,0 +1,216 @@
+package org.firstinspires.ftc.teamcode.teleop.comp;
+
+import com.acmerobotics.dashboard.FtcDashboard;
+import com.acmerobotics.dashboard.telemetry.TelemetryPacket;
+import com.pedropathing.geometry.Pose;
+import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
+import com.qualcomm.robotcore.util.ElapsedTime;
+import com.seattlesolvers.solverslib.gamepad.GamepadKeys;
+
+import org.firstinspires.ftc.teamcode.robot.leds.IndicatorLed;
+import org.firstinspires.ftc.teamcode.robot.utils.Alliance;
+import org.firstinspires.ftc.teamcode.robot.utils.PoseController;
+import org.firstinspires.ftc.teamcode.teleop.DennyOpMode;
+
+
+@TeleOp(name = "RED",group = "111")
+public class CompRedSolo extends DennyOpMode {
+    TelemetryPacket packet;
+    FtcDashboard dash;
+    boolean holdTurret = false;
+    ElapsedTime gating;
+    ElapsedTime artiing;
+    ElapsedTime checkerTreshhold;
+    boolean compress = false;
+    boolean is3 = false;
+    double maxPing = 0;
+    static final double GOAL_ANGLE_STEP_DEG = 1.0;
+    static final double SHOOTER_SPEED_STEP = 5.0;
+    double goalAngleOffsetDeg = 0;
+    @Override
+    public void onInit() {
+        super.onInit();
+        packet = new TelemetryPacket();
+        dash = FtcDashboard.getInstance();
+        gating = new ElapsedTime();
+        artiing = new ElapsedTime();
+        checkerTreshhold = new ElapsedTime();
+    }
+
+    @Override
+    public void setAlliance() {
+        a = Alliance.RED;
+    }
+
+    @Override
+    public void onStart() {
+        r.turnOn();
+        r.drive.startDrive();
+        r.shooter.enableVoltageCompensation(true);
+        r.drive.setRoboCentric();
+
+        r.prism.setAllianceColor(a);
+
+//        r.prism.getSineWave().setDirection(Direction.Forward);
+//        r.prism.getSineWave().setPeriod(50);
+//        r.prism.getSineWave().setPrimaryColor(100,0,100);
+//        r.prism.getSineWave().setBrightness(100);
+//        r.prism.getSineWave().setSpeed(3);
+
+        r.prism.update();
+
+        r.indicator.set(IndicatorLed.Color.RED);
+    }
+
+    @Override
+    public void onUpdate() {
+
+        if(base.wasJustPressed(GamepadKeys.Button.DPAD_LEFT)){
+            goalAngleOffsetDeg += GOAL_ANGLE_STEP_DEG;
+        }
+        if(base.wasJustPressed(GamepadKeys.Button.DPAD_RIGHT)){
+            goalAngleOffsetDeg -= GOAL_ANGLE_STEP_DEG;
+        }
+        if(base.wasJustPressed(GamepadKeys.Button.DPAD_UP)){
+            r.shooter.addVelOffset(SHOOTER_SPEED_STEP);
+        }
+        if(base.wasJustPressed(GamepadKeys.Button.DPAD_DOWN)){
+            r.shooter.addVelOffset(-SHOOTER_SPEED_STEP);
+        }
+        if(base.wasJustPressed(GamepadKeys.Button.SHARE)){
+            goalAngleOffsetDeg = 0;
+            holdTurret = false;
+            r.shooter.resetVelOffset();
+        }
+
+        r.turret.unlock();
+
+//        if(base.wasJustPressed(GamepadKeys.Button.DPAD_DOWN)){
+//            r.drive.teleToggleCentric();
+//        }
+        r.drive.drive(base,0,true);
+
+        Pose futurePose
+//                = r.drive.getFollower().getPose();
+                = PoseController.getFuturePose(r.drive.getFollower(), 0.4);
+
+
+        if(base.wasJustPressed(GamepadKeys.Button.B)){
+            holdTurret = !holdTurret;
+        }
+
+        Pose goalPose ;
+        if(PoseController.isInFarZone(r.drive.getPose())){
+            r.hood.setCompMode(true);
+            goalPose = a.farPose;
+        }else{
+            r.hood.setCompMode(false);
+            goalPose = a.pose;
+        }
+
+        if(holdTurret) {
+            r.turret.setYaw(0);
+        }else {
+            r.turret.face(goalPose,
+                    futurePose,
+                    r.drive.getFollower().getAngularVelocity());
+//            if(PoseController.isInZone(r.drive.getPose())) {
+//                r.turret.face(goalPose,
+//                        futurePose,
+//                        r.drive.getFollower().getAngularVelocity());
+//            }else if(PoseController.isNearZone(r.drive.getPose())){
+//                Pose nearPose = PoseController.getNearestPose(r.drive.getPose());
+//                r.turret.face(goalPose,
+//                        nearPose,
+//                        r.drive.getFollower().getAngularVelocity());
+//            }
+
+        }
+        double dis = PoseController.getGoalDis(futurePose,a);
+        r.shooter.setDis(dis);
+        r.hood.setDis(dis);
+
+
+
+        r.drive.setSlower(1);
+        if(base.getTrigger(GamepadKeys.Trigger.RIGHT_TRIGGER) > 0){
+            r.intake.spinOut();
+            r.gate.open_gate();
+        }else if(base.getButton(GamepadKeys.Button.RIGHT_BUMPER)){
+            r.intake.spinIn();
+            r.gate.close_gate();
+            r.drive.setSlower(0.45);
+        }else if(base.getTrigger(GamepadKeys.Trigger.LEFT_TRIGGER) > 0){
+            if(PoseController.isInFarZone(r.drive.getPose())){
+//                r.intake.spinShoot();
+//                r.intake.speedIn();
+                r.intake.speedShoot();
+                r.turret.lock();
+            }
+            else {
+//                r.intake.spinIn();
+                r.intake.speedIn();
+            }
+            r.gate.open_gate(gating.milliseconds());
+            if(!compress) {
+                compress = true;
+                gating.reset();
+            }
+            r.indicator.set(IndicatorLed.Color.GREEN);
+            is3 = false;
+            r.prism.setNoArti();
+        }
+        else{
+            r.intake.spinOff();
+            r.gate.close_gate();
+            compress = false;
+            r.indicator.set(IndicatorLed.Color.RED);
+        }
+
+//        if(base.wasJustPressed(GamepadKeys.Button.DPAD_UP)){
+//            r.shooter.shooterToggle();
+//            if(Shooter.activated){
+//                base.gamepad.rumble(100);
+//            }
+//        }
+
+        if(base.wasJustPressed(GamepadKeys.Button.START)){
+            r.drive.cornerReset();
+        }
+        if(base.wasJustPressed(GamepadKeys.Button.TRIANGLE)){
+            r.drive.goalReset();
+        }
+        if(base.getButton(GamepadKeys.Button.CROSS)) {
+            r.drive.holdAngle();
+            r.drive.face(a.pose,futurePose);
+        }
+        else if(base.getButton(GamepadKeys.Button.SQUARE)) {
+            r.drive.holdAngle();
+            r.drive.setAngle(a.equals(Alliance.RED)?Math.toRadians(30):Math.toRadians(150));
+        }else{
+            r.drive.unholdAngle();
+        }
+
+        if(is3)
+            base.gamepad.rumble(67);
+
+        if(maxPing < deltaTime){
+            maxPing = deltaTime;
+        }
+
+        packet.put("distance",dis);
+        packet.put("Pose",r.drive.getPose());
+        packet.put("Loop Time",deltaTime);
+        packet.put("Max Loop Time",maxPing);
+
+        packet.put("Angel velocity",r.drive.getFollower().getAngularVelocity());
+
+        packet.put("s vel",r.shooter.getVelocity());
+        packet.put("s target vel",r.shooter.getTarget());
+
+        packet.put("heading",r.drive.getFollower().getHeading());
+        packet.put("s heading ++", r.drive.heading);
+        dash.sendTelemetryPacket(packet);
+
+    }
+}

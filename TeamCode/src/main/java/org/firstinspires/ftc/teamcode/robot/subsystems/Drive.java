@@ -1,0 +1,225 @@
+package org.firstinspires.ftc.teamcode.robot.subsystems;
+import static org.firstinspires.ftc.teamcode.robot.subsystems.AxonTurret.normalizeAngle;
+
+import com.acmerobotics.dashboard.config.Config;
+import com.pedropathing.follower.Follower;
+import com.pedropathing.geometry.BezierPoint;
+import com.pedropathing.geometry.Pose;
+import com.qualcomm.robotcore.hardware.HardwareMap;
+import com.seattlesolvers.solverslib.command.InstantCommand;
+import com.seattlesolvers.solverslib.command.SubsystemBase;
+import com.seattlesolvers.solverslib.controller.PIDController;
+import com.seattlesolvers.solverslib.gamepad.GamepadEx;
+import com.seattlesolvers.solverslib.gamepad.GamepadKeys;
+
+import org.firstinspires.ftc.teamcode.auto.pedroPathing.Constants;
+import org.firstinspires.ftc.teamcode.robot.utils.Alliance;
+import org.firstinspires.ftc.teamcode.robot.utils.InputScaler;
+
+@Config
+public class Drive extends SubsystemBase {
+    public Drive(){}
+    private Follower f;
+    private Alliance a = Alliance.BLUE;
+    private boolean hold = false, field = true, holdAngle = false;
+    public static double slower = 1;
+    public static double kP = 1, kI = 0, kD = 0.1;
+    public static double targetAngle = 0;
+    public double heading = 0;
+    PIDController control;
+
+    public void init(HardwareMap hw, Alliance a,Pose startPose) {
+       init(hw);
+        f.setStartingPose(startPose);
+        this.a = a;
+        slower = 1;
+        control = new PIDController(kP,kI,kD);
+    }
+
+    public void init(HardwareMap hw) {
+        f = Constants.createFollower(hw);
+    }
+
+    public void setAlliance(Alliance a){
+        this.a = a;
+    }
+
+    public void startDrive() {
+        f.startTeleopDrive();
+    }
+
+    public InstantCommand start() { return new InstantCommand(this::startDrive); }
+
+    public void goalReset(){
+        Pose reset =  new Pose(18.651, 80.121, Math.toRadians(180));
+
+        if (a.equals(Alliance.BLUE))
+            f.setPose(reset);
+        else
+            f.setPose(new Pose(126.226, 77.205, Math.toRadians(0)));
+
+    }
+
+    @Override
+    public void periodic() {
+        f.update();
+    }
+
+    public void setAngle(double angle){
+        targetAngle = angle;
+    }
+
+    public void face(Pose targetPose, Pose robotPose) {
+        double angleToTargetFromCenter = Math.atan2(targetPose.getY() - robotPose.getY(), targetPose.getX() - robotPose.getX());
+        double normalizeAngle = normalizeAngle(angleToTargetFromCenter);
+        setAngle(normalizeAngle);
+    }
+
+
+    public void holdAngle(){
+        holdAngle = true;
+    }
+    public void unholdAngle(){
+        holdAngle = false;
+    }
+    public void toggleAngle(){
+        holdAngle = !holdAngle;
+    }
+
+    public void drive(GamepadEx g, double deltaTime) {
+        drive(g,deltaTime,false,false);
+    }
+
+    public void setSlower(double a){
+        slower = a;
+    }
+
+    public void drive(GamepadEx g,double deltaTime, boolean isSlow, boolean isSlow2) {
+        if (!hold) {
+            double heading_power = -InputScaler.scaleInputHigh(g.getRightX()) * slower;
+            double forward_power = InputScaler.scaleInputHigh(g.getLeftY())* slower;
+            double strafe_power = -InputScaler.scaleInputHigh(g.getLeftX())* slower;
+
+            if(g.getTrigger(GamepadKeys.Trigger.RIGHT_TRIGGER) > 0 && isSlow){
+                heading_power *= 0.1;
+                forward_power *= 0.1;
+                strafe_power *= 0.1;
+            }else if(g.getButton(GamepadKeys.Button.RIGHT_BUMPER) && isSlow2){
+                heading_power *= 0.5;
+                forward_power *= 0.5;
+                strafe_power *= 0.5;
+            }
+
+            if(holdAngle) {
+                control.setPID(kP,kI,kD);
+                double error = f.getHeading() - targetAngle;
+                heading =  f.getHeading();
+                if(heading < 0){
+                    heading = 3* Math.PI - f.getHeading();
+                }
+                heading_power = control.calculate(heading,targetAngle);
+            }
+
+            if (field) {
+                f.setTeleOpDrive(forward_power, strafe_power,
+                        heading_power,false, a == Alliance.BLUE ? 3.14 : 0);
+
+            } else
+                f.setTeleOpDrive(forward_power, strafe_power,
+                        heading_power, true);
+        }
+    }
+
+    public void drive(GamepadEx g,double deltaTime, boolean isSlow) {
+        if (!hold) {
+            double heading_power = -InputScaler.scaleInputHigh(g.getRightX()) * 0.8;
+            double forward_power = InputScaler.scaleInputHigh(g.getLeftY());
+            double strafe_power = -InputScaler.scaleInputHigh(g.getLeftX());
+
+            if(forward_power > 0){
+                forward_power *= slower;
+            }
+
+            if(g.isDown(GamepadKeys.Button.LEFT_BUMPER) && isSlow){
+                if(forward_power > 0)
+                    forward_power *= 0.45;
+            }
+
+            if(holdAngle) {
+                control.setPID(kP,kI,kD);
+                double error = f.getHeading() - targetAngle;
+                heading =  f.getHeading();
+                if(heading < 0){
+                    heading = 3* Math.PI - f.getHeading();
+                }
+                heading_power = control.calculate(heading,targetAngle);
+            }
+
+            if (field) {
+                f.setTeleOpDrive(forward_power, strafe_power,
+                        heading_power,false, a == Alliance.BLUE ? 3.14 : 0);
+
+            } else
+                f.setTeleOpDrive(forward_power, strafe_power,
+                        heading_power, true);
+        }
+    }
+
+    public void holdCurrent() {
+        f.holdPoint(new BezierPoint(f.getPose()), f.getHeading(), true);
+        hold = true;
+    }
+
+    public void releaseHold() {
+        hold = false;
+    }
+
+    public void teleToggleCentric() {
+        field = !field;
+    }
+
+    public void setRoboCentric(){
+        field = false;
+    }
+
+    public void cornerReset() {
+        if (a.equals(Alliance.BLUE))
+            f.setPose(new Pose(5.14, 8.6, Math.toRadians(0)).mirror());
+        else
+            f.setPose(new Pose(5.14, 8.6, Math.toRadians(0)));
+    }
+
+    public InstantCommand toggleCentric() {
+        return new InstantCommand(this::teleToggleCentric);
+    }
+
+    public InstantCommand hold() {
+        return new InstantCommand(this::holdCurrent);
+    }
+
+    public InstantCommand release() {
+        return new InstantCommand(this::releaseHold);
+    }
+
+    public InstantCommand corner() {
+        return new InstantCommand(this::cornerReset);
+    }
+
+    public void setStart(Pose start) {
+        f.setStartingPose(start);
+    }
+
+    public Pose getPose() {
+        return f.getPose();
+    }
+
+    public Pose isBusy() {
+        return f.getPose();
+    }
+
+    public double getT() {
+        return f.getCurrentTValue();
+    }
+
+    public Follower getFollower() { return f;}
+}
