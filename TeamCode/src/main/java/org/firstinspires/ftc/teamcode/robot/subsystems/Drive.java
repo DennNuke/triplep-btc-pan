@@ -69,10 +69,6 @@ public class Drive extends SubsystemBase {
         double normalizeAngle = normalizeAngle(angleToTargetFromCenter);
         setAngle(normalizeAngle);
     }
-    public void holdAngle(double targetAngle){
-        holdAngle = true;
-        setAngle(targetAngle);
-    }
     public void holdAngle(){
         holdAngle = true;
     }

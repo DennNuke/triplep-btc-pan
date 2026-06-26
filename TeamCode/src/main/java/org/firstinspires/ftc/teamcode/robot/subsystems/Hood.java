@@ -21,12 +21,6 @@ public class Hood extends SubsystemBase {
     public static double compM = 0.9;
     public static double compShoo = 800;
     public static boolean isCompMode = false;
-//    public static double x1 = 41.559,
-//            x2 = 85.82,
-//            x3 = 133.98;
-//    public static double s1 = 0.67,
-//            s2 = 0,
-//            s3 = 0.15;
 
     DennyLUT lut;
 
@@ -36,11 +30,6 @@ public class Hood extends SubsystemBase {
         h = new ServoEx(hw,"h");
 
         lut = new DennyLUT();
-//        lut.add(43.6,  0.75);
-//        lut.add(75.8,  0.16);
-//        lut.add(102.6, 0.16);
-//        lut.add(135.6, 0.22);
-//        lut.add(150.6, 0.21);
 
         lut.add(49.2,  0.89);
         lut.add(54.2,0.89);

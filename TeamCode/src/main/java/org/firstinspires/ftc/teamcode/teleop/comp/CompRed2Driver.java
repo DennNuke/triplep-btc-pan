@@ -17,7 +17,6 @@ import org.firstinspires.ftc.teamcode.teleop.DennyOpMode;
 public class CompRed2Driver extends DennyOpMode {
     TelemetryPacket packet;
     FtcDashboard dash;
-    boolean holdAngle;
     boolean holdTurret = false;
     ElapsedTime gating;
     boolean compress = false;

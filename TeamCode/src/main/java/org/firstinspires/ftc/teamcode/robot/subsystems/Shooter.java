@@ -18,16 +18,7 @@ public class Shooter extends SubsystemBase {
     public static double t = 0;
     public static double kS = 0.07, kP = 0.004;
     public static double kV1 = 0.000312, kV2 = 0.00032;
-
     public static double speed1 = 1100, speed2 = 1800;
-
-//    public static double x1 = 41.559,
-//            x2 = 85.82,
-//            x3 = 133.98;
-//    public static double s1 = 1000,
-//            s2 = 1360,
-//            s3 = 1480;
-
     public DennyLUT lut;
 
     public static boolean activated = true;
@@ -42,11 +33,6 @@ public class Shooter extends SubsystemBase {
         r.setInverted(true);
 
         lut = new DennyLUT();
-//        lut.add(43.6, 980);
-//        lut.add(75.8, 1320);
-//        lut.add(102.6, 1360);
-//        lut.add(135.6, 1740);
-//        lut.add(150.6, 1840);
 
         lut.add(49.2, 950);
         lut.add(54.2,1000);
@@ -101,13 +87,6 @@ public class Shooter extends SubsystemBase {
         return Math.abs((getTarget()- getVelocity())) < 60;
     }
     public void setDis(double x) {
-//        double output = 0;
-//        if(x < x2){
-//            output = s1 +(x - x1)/(x2-x1) * (s2-s1);
-//        }else{
-//            output = s2 +(x - x2)/(x3-x2) * (s3-s2);
-//        }
-
         setShooterTarget(lut.get(x) + velOffset);
     }
 
@@ -118,7 +97,6 @@ public class Shooter extends SubsystemBase {
     @Override
     public void periodic() {
         if (activated) {
-
             set((kV1 + (getTarget() - speed1)/(speed2 - speed1) * (kV2 - kV1)) * getTarget() + (kP * (getTarget() - getVelocity())) + kS);
         }
     }

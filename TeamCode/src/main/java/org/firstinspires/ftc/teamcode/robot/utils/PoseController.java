@@ -61,8 +61,8 @@ public class PoseController {
 
     public static double getGoalDis(Pose r,Alliance a){
         double dis =  r.distanceFrom(a.pose);
-        if(a.equals(Alliance.BLUE))
-            dis += 3;
+//        if(a.equals(Alliance.BLUE))
+//            dis += 3;
         return dis;
     }
 

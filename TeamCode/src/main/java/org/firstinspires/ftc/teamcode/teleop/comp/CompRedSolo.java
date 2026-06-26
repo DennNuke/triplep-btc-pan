@@ -163,7 +163,8 @@ public class CompRedSolo extends DennyOpMode {
             r.drive.face(a.pose,futurePose);
         }
         else if(base.getButton(GamepadKeys.Button.SQUARE)) {
-            r.drive.holdAngle(a.equals(Alliance.RED)?Math.toRadians(30):Math.toRadians(150));
+            r.drive.holdAngle();
+            r.drive.setAngle(a.equals(Alliance.RED)?Math.toRadians(30):Math.toRadians(150));
         }else{
             r.drive.unholdAngle();
         }
