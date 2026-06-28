@@ -24,6 +24,7 @@ public class Robot {
         voltage = new VoltageController();
         prism = new PrismLed();
         indicator = new IndicatorLed();
+        kickstand = new Kickstand();
     }
     public static Robot getInstance(){return INSTANCE;}
     private Alliance a;
@@ -36,6 +37,7 @@ public class Robot {
     public final VoltageController voltage;
     public final PrismLed prism;
     public final IndicatorLed indicator;
+    public final Kickstand kickstand;
 
     public static Pose defaultPose = new Pose(72, 72, Math.toRadians(90));
     private static boolean isAutoBeen = false;
@@ -46,6 +48,7 @@ public class Robot {
         shooter.turnOn();
         turret.on();
         indicator.on();
+        kickstand.activate(true);
     }
 
     public void turnOff(){
@@ -53,6 +56,7 @@ public class Robot {
         hood.activate(false);
         shooter.turnOff();
         turret.off();
+        kickstand.activate(false);
     }
 
 
