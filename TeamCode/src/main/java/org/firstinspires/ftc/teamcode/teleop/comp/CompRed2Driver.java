@@ -82,7 +82,7 @@ public class CompRed2Driver extends DennyOpMode {
         }else if(helper.getTrigger(GamepadKeys.Trigger.LEFT_TRIGGER) > 0 ||
                 base.getTrigger(GamepadKeys.Trigger.LEFT_TRIGGER) > 0){
             r.intake.spinIn();
-            r.gate.open_gate(gating.milliseconds());
+            r.gate.open_gate();
             if(!compress) {
                 compress = true;
                 gating.reset();

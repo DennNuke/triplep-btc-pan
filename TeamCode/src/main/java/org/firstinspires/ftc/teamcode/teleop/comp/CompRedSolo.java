@@ -135,9 +135,9 @@ public class CompRedSolo extends DennyOpMode {
                 r.turret.lock();
             }
             else {
-                r.intake.speedIn();
+                r.intake.spinShoot();
             }
-            r.gate.open_gate(gating.milliseconds());
+            r.gate.open_gate();
             if(!compress) {
                 compress = true;
                 gating.reset();
