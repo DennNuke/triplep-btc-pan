@@ -16,9 +16,9 @@ public class Shooter extends SubsystemBase {
     private MotorEx r;
 
     public static double t = 0;
-    public static double kS = 0.07, kP = 0.004;
-    public static double kV1 = 0.000312, kV2 = 0.00032;
-    public static double speed1 = 1100, speed2 = 1800;
+    public static double kS = 0.07, kP = 0.003;
+    public static double kV1 = 0.000294, kV2 = 0.000314;
+    public static double speed1 = 1110, speed2 = 1810;
     public DennyLUT lut;
 
     public static boolean activated = true;
@@ -34,14 +34,20 @@ public class Shooter extends SubsystemBase {
 
         lut = new DennyLUT();
 
-        lut.add(49.2, 950);
-        lut.add(54.2,1000);
-        lut.add(75.8, 1270);
-        lut.add(90.4,  1330 );
+        lut.add(49.2, 1200); //0.8
+        lut.add(77.18, 1320); //0.5
+        lut.add(94.4, 1460); //0.45
+        lut.add(109.5, 1620); //0.45
+        lut.add(138.54, 2040); //0.45
 
-        lut.add(102.6, 1390);
-        lut.add(135.6, 2000);
-        lut.add(150.6, 2100);
+//        lut.add(49.2, 950);
+//        lut.add(54.2,1000);
+//        lut.add(75.8, 1270);
+//        lut.add(90.4,  1330 );
+//
+//        lut.add(102.6, 1390);
+//        lut.add(135.6, 2000);
+//        lut.add(150.6, 2100);
     }
 
     public double getTarget() {
@@ -49,11 +55,11 @@ public class Shooter extends SubsystemBase {
     }
 
     public double getVelocity() {
-        return l.getVelocity();
+        return r.getVelocity();
     }
 
     public double getAcceleration() {
-        return l.getAcceleration();
+        return r.getAcceleration();
     }
 
     public void set(double p) {

@@ -15,7 +15,7 @@ public class AxonTurret extends SubsystemBase {
     public static double rpt = 5.511566;
     public static double t = 0;
 
-    public static double offset = 0.0025;
+    public static double offset = -0.01;
     public static double oneServoOffset = 0;
     public static double rAM = -0.14;
 
@@ -76,6 +76,20 @@ public class AxonTurret extends SubsystemBase {
 
         double angleToTargetFromCenter = Math.atan2(y, x) + angleVel * rAM  ;
         double robotAngleDiff = normalizeAngle(angleToTargetFromCenter - robotPose.getHeading());
+        setYaw(robotAngleDiff);
+    }
+
+    public void face(Pose targetPose, Pose robotPose, double angleVel, double yawOffsetRadians) {
+        double y =  targetPose.getY() - robotPose.getY();
+
+        double x = targetPose.getX() - robotPose.getX();
+
+        if(Math.abs(angleVel)<2.5){
+            angleVel = 0;
+        }
+
+        double angleToTargetFromCenter = Math.atan2(y, x) + angleVel * rAM  ;
+        double robotAngleDiff = normalizeAngle(angleToTargetFromCenter - robotPose.getHeading() + yawOffsetRadians);
         setYaw(robotAngleDiff);
     }
 

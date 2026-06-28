@@ -11,7 +11,7 @@ import com.seattlesolvers.solverslib.hardware.servos.ServoEx;
 public class Gate extends SubsystemBase {
     public Gate(){}
     public ServoEx g;
-    public static double open_p = 1, close_p = 0.76;
+    public static double open_p = 0.45, close_p = 0.26;
     public boolean isOpen = false;
     public static double t = 0.73;
 

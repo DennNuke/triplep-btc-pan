@@ -47,7 +47,8 @@ public class CompRedSolo extends DennyOpMode {
         r.turnOn();
         r.drive.startDrive();
         r.shooter.enableVoltageCompensation(true);
-        r.drive.setRoboCentric();
+//        r.drive.setRoboCentric();
+
 
         r.prism.setAllianceColor(a);
 
@@ -92,7 +93,7 @@ public class CompRedSolo extends DennyOpMode {
 
         Pose futurePose
 //                = r.drive.getFollower().getPose();
-                = PoseController.getFuturePose(r.drive.getFollower(), 0.4);
+                = PoseController.getFuturePose(r.drive.getFollower());
 
 
         if(base.wasJustPressed(GamepadKeys.Button.B)){
@@ -113,7 +114,8 @@ public class CompRedSolo extends DennyOpMode {
         }else {
             r.turret.face(goalPose,
                     futurePose,
-                    r.drive.getFollower().getAngularVelocity());
+                    r.drive.getFollower().getAngularVelocity(),
+                    Math.toRadians(goalAngleOffsetDeg));
         }
         double dis = PoseController.getGoalDis(futurePose,a);
         r.shooter.setDis(dis);
@@ -128,7 +130,7 @@ public class CompRedSolo extends DennyOpMode {
         }else if(base.getButton(GamepadKeys.Button.RIGHT_BUMPER)){
             r.intake.spinIn();
             r.gate.close_gate();
-            r.drive.setSlower(0.45);
+//            r.drive.setSlower(0.45);
         }else if(base.getTrigger(GamepadKeys.Trigger.LEFT_TRIGGER) > 0){
             if(PoseController.isInFarZone(r.drive.getPose())){
                 r.intake.speedShoot();
@@ -167,6 +169,13 @@ public class CompRedSolo extends DennyOpMode {
             r.drive.setAngle(a.equals(Alliance.RED)?Math.toRadians(30):Math.toRadians(150));
         }else{
             r.drive.unholdAngle();
+        }
+
+
+        if(PoseController.isInZone(r.drive.getPose())){
+            r.intake.transferOn();
+        }else{
+            r.intake.transferOff();
         }
 
         if(is3)

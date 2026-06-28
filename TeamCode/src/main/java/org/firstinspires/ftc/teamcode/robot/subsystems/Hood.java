@@ -16,8 +16,8 @@ public class Hood extends SubsystemBase {
     public ServoEx h;
 
     public static double t = 0.5;
-    public static double min = 0.16;
-    public static double max = 0.88;
+    public static double min = 0.23;
+    public static double max = 1;
     public static double compM = 0.9;
     public static double compShoo = 800;
     public static boolean isCompMode = false;
@@ -31,14 +31,21 @@ public class Hood extends SubsystemBase {
 
         lut = new DennyLUT();
 
-        lut.add(49.2,  0.89);
-        lut.add(54.2,0.89);
-        lut.add(75.8,  0.32);
-        lut.add(90.4,  0.30);
 
-        lut.add(102.6, 0.27);
-        lut.add(135.6, 0.29);
-        lut.add(150.6, 0.21);
+        lut.add(49.2, 0.8); //0.8
+        lut.add(77.18, 0.5); //0.5
+        lut.add(94.4, 0.45); //0.45
+        lut.add(109.5, 0.4); //0.45
+        lut.add(138.54, 0.27); //0.45
+
+//        lut.add(49.2,  1);
+//        lut.add(54.2,1);
+//        lut.add(75.8,  0.52);
+//        lut.add(90.4,  0.40);
+//
+//        lut.add(102.6, 0.37);
+//        lut.add(135.6, 0.39);
+//        lut.add(150.6, 0.31);
     }
 
     public double getTarget() {

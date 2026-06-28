@@ -16,8 +16,8 @@ public class DoubleIntake extends SubsystemBase {
     MotorEx mr,ml;
     ServoEx pto;
 
-    public static double transferOnPos = 0.8;
-    public static double transferOffPos = 0.81;
+    public static double transferOnPos = 0.08;
+    public static double transferOffPos = 0.14;
 
 
     public static double in = 1;
@@ -43,17 +43,20 @@ public class DoubleIntake extends SubsystemBase {
         ml.set(power);
     }
     public double getVelocity(){
-        return ml.getVelocity();
+        return mr.getVelocity();
     }
     public void setSpeed(double speed){
         double error =  speed - getVelocity();
         setPower(speed * kF + error * kP);
     }
+    public void setServoPos(double pos){
+        pto.set(pos);
+    }
     public void transferOn(){
-        pto.set(transferOnPos);
+        setServoPos(transferOnPos);
     }
     public void transferOff(){
-        pto.set(transferOffPos);
+        setServoPos(transferOffPos);
     }
     public void speedIn(){
         setSpeed(inSpeed);
