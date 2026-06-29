@@ -14,7 +14,7 @@ public class PoseController {
     public static double rVM = 0.7;
     private final static PolygonZone closeLaunchZone = new PolygonZone(new Point(144, 144), new Point(72, 72), new Point(0, 144));
     private final static PolygonZone farLaunchZone = new PolygonZone(new Point(48, 0), new Point(72, 24), new Point(96, 0));
-    private final static PolygonZone robotZone = new PolygonZone(20, 20);
+    private final static PolygonZone robotZone = new PolygonZone(15, 18);
     private final static PolygonZone bigRobotZone = new PolygonZone(50, 50);
     public static boolean isInZone(Pose pose){
         robotZone.setPosition(pose.getX(), pose.getY());

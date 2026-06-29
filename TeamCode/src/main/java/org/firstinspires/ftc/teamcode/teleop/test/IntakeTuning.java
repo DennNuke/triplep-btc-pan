@@ -10,7 +10,8 @@ import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 import org.firstinspires.ftc.teamcode.robot.subsystems.DoubleIntake;
 import org.firstinspires.ftc.teamcode.robot.subsystems.Shooter;
 
-@TeleOp
+
+@TeleOp(group = "test")
 @Config
 //@Disabled
 public class IntakeTuning extends OpMode {

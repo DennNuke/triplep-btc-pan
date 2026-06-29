@@ -47,7 +47,7 @@ public class CompRedSolo extends DennyOpMode {
         r.turnOn();
         r.drive.startDrive();
         r.shooter.enableVoltageCompensation(true);
-//        r.drive.setRoboCentric();
+        r.drive.setRoboCentric();
 
 
         r.prism.setAllianceColor(a);
@@ -88,7 +88,7 @@ public class CompRedSolo extends DennyOpMode {
 
 //        if(base.wasJustPressed(GamepadKeys.Button.DPAD_DOWN)){
 //            r.drive.teleToggleCentric();
-//        }
+//        }     scibidi toilet SCIBIDITOILET
         r.drive.drive(base);
 
         Pose futurePose
@@ -108,7 +108,7 @@ public class CompRedSolo extends DennyOpMode {
             r.hood.setCompMode(false);
             goalPose = a.pose;
         }
-
+//SCIBIDITOILET
         if(holdTurret) {
             r.turret.setYaw(0);
         }else {

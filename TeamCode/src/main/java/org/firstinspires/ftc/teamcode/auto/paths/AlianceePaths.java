@@ -24,7 +24,7 @@ public class AlianceePaths {
     public Pose p4_end   = new Pose(59.908, 76.001,  Math.toRadians(180));
     public Pose p5_end   = new Pose(16.881, 66.801,  Math.toRadians(-163));
     public Pose p7_ctrl   = new Pose(25.273, 57.748,  Math.toRadians(145));
-    public Pose p7_end   = new Pose(12.441, 61.054,  Math.toRadians(141));
+    public Pose p7_end   = new Pose(10.241, 58.054,  Math.toRadians(143));
 
     public Pose p8_ctrl  = new Pose(50.428, 71.691,  Math.toRadians(145));
     public Pose p8_end   = new Pose(59.107, 78.040,  Math.toRadians(170));
@@ -269,7 +269,7 @@ public class AlianceePaths {
         return follower.pathBuilder()
                 .addPath(new BezierLine(p11_true_end, p4_end))
                 .setTangentHeadingInterpolation()
-                .setConstraints( new PathConstraints(0.9, 100, 1, 1))
+                .setConstraints( new PathConstraints(0.97, 100, 1, 1))
                 .setReversed()
 //                .setConstantHeadingInterpolation(p4_end.getHeading())
                 .build();

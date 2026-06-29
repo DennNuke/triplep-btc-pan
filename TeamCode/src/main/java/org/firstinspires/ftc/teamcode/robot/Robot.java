@@ -48,7 +48,7 @@ public class Robot {
         shooter.turnOn();
         turret.on();
         indicator.on();
-        kickstand.activate(true);
+//        kickstand.activate(true);
     }
 
     public void turnOff(){
@@ -75,6 +75,7 @@ public class Robot {
         voltage.init(hw);
         prism.init(hw);
         indicator.init(hw);
+        kickstand.init(hw);
     }
 
     public void periodic(){

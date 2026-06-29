@@ -40,7 +40,7 @@ public class SoloBlueAuto extends CommandOpMode {
 
         schedule(
                 new SequentialCommandGroup(
-                        new WaitCommand(400),
+                        new WaitCommand(10),
                         r.intake.off(),
                         r.intake.in(),
                         new FollowPathCommand(r.drive.getFollower(), paths.path1())
@@ -132,10 +132,15 @@ public class SoloBlueAuto extends CommandOpMode {
     @Override
     public void run() {
         super.run();
-        Pose futurePose = PoseController.getFuturePose(r.drive.getFollower(),0.5);
+        Pose futurePose = PoseController.getFuturePose(r.drive.getFollower(),0.4);
         r.turret.face(a.pose,
                 futurePose);
         double dis = PoseController.getGoalDis(futurePose,a);
+        if(PoseController.isInZone(r.drive.getPose())){
+            r.intake.transferOn();
+        }else{
+            r.intake.transferOff();
+        }
         r.shooter.setDis(dis);
         r.hood.setDis(dis);
         r.saveEnd();

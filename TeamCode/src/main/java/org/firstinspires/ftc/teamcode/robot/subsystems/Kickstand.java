@@ -1,9 +1,11 @@
 package org.firstinspires.ftc.teamcode.robot.subsystems;
 
+import com.acmerobotics.dashboard.config.Config;
 import com.qualcomm.robotcore.hardware.HardwareMap;
 import com.seattlesolvers.solverslib.command.SubsystemBase;
 import com.seattlesolvers.solverslib.hardware.servos.ServoEx;
 
+@Config
 public class Kickstand extends SubsystemBase {
     public Kickstand(){}
     public ServoEx servo1, servo2;
